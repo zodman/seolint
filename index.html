@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.0/handlebars.amd.min.js"></script>
+<script type="text/javascript">
+ var ws = new WebSocket('ws://localhost:8888/ws');
+    var $message = $('#message');
+    ws.onopen = function(){
+      console.log("open");
+    };
+    ws.onmessage = function(ev){
+
+      console.log("reci", ev);
+      var data = JSON.parse(ev.data);
+      if(data.status) {
+        $("#message").text(data.msg);
+      } else {
+        $("#message").text(ev.data);
+      }
+    };
+    ws.onclose = function(ev){
+    };
+    ws.onerror = function(ev){
+    };
+
+$(document).ready(function(){
+  $("#analize").click(function(){
+    var val = $("#url").val();
+    console.log("send", val);
+    ws.send(val);
+  });
+
+});
+
+</script>
+</head>
+
+<body>
+   <div class="container">
+<input name="url" type="text" id="url">
+<button id="analize" >Analize</button>
+
+<div id="message"></div>
+</div>
+</body>
+</html>

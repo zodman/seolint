@@ -1,0 +1,58 @@
+from tornado import websocket, web, ioloop
+from tornado.options import options, define, parse_command_line
+import json
+import seolint
+from goose import Goose
+
+parse_command_line()
+
+class IndexHandler(web.RequestHandler):
+    def get(self):
+        self.render("index.html")
+
+
+class SocketHandler(websocket.WebSocketHandler):
+    def on_message(self, message):
+        self.write_message(json.dumps({'status':10,'msg': 'abriendo url'}))
+        tree = seolint.url_open(message)
+        print tree
+        self.write_message(json.dumps({'status':30,'msg': 'getting tags'}))
+        tags = seolint.tags(tree)
+        self.write_message(json.dumps({'status':40,'msg': 'obteniendo frecuencia...'}))
+        frecuency = seolint.frequency(tree)
+        self.write_message(json.dumps({'status':50,'msg': 'obteniendo digrams and trigrams...'}))
+        digrams = seolint.frequency(tree, ngram_size=2)
+        trigrams = seolint.frequency(tree, ngram_size=3)
+        self.write_message(json.dumps({'status':70,'msg': 'check links...'}))
+        check_links = seolint.check_links(message, tree, timeout=10)
+        self.write_message(json.dumps({'status':80,'msg': 'getting Text and metadata'}))
+        g = Goose()
+        article = g.extract(url =message)
+        self.write_message(json.dumps({'status':100,'msg': 'DONE!'}))
+        result = {
+                'tags':tags, 'frequency': frecuency,
+                'digrams': digrams,'trigrams': trigrams,
+                'check_links': check_links,
+                'article': {
+                    'title': article.title,
+                    'desc': article.meta_description,
+                    'text': article.cleaned_text,
+                    'top_image': article.top_image.src,
+                }
+                }
+        self.write_message(json.dumps(result))
+        self.close()
+
+app = web.Application([
+    (r'/', IndexHandler),
+    (r'/ws', SocketHandler),
+#    (r'/api', ApiHandler),
+#    (r'/(favicon.ico)', web.StaticFileHandler, {'path': '../'}),
+#    (r'/(rest_api_example.png)', web.StaticFileHandler, {'path': './'}),
+],
+ debug=True, autoreload=True)
+
+
+if __name__ == '__main__':
+    app.listen(8888)
+    ioloop.IOLoop.instance().start()
