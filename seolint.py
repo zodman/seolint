@@ -34,16 +34,17 @@ def keywords_for_tag(tree, tag, attr=None):
     for e in sel_tree:
         if attr:
             text = e.get(attr, '')
+            keywords.append(text)
         else:
             text = e.text
-        keywords.extend(extract_keywords(text))
+            keywords.extend(extract_keywords(text))
+    keywords = " ".join(keywords)
     return len(sel_tree), keywords
 
 
 def print_keywords(title, args_kw):
     count, kw = args_kw
     count_kw = len(kw)
-    kw = " ".join(kw)
     if kw:
         return {'keywords':{'tag': title, 'count':count, 'content':kw}}
 
@@ -56,7 +57,7 @@ def tags(tree):
         res = print_keywords(tag, keywords_for_tag(tree, tag))
         result.append(res)
 
-    check_attrs = [('img', 'alt'), ('img', 'title')]
+    check_attrs = [('img', 'alt'), ('img', 'title'), ('img', 'src')]
     for tag, attr in check_attrs:
         res = print_keywords("%s:%s" % (tag, attr),
                        keywords_for_tag(tree, tag, attr))

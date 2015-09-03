@@ -15,7 +15,6 @@ class SocketHandler(websocket.WebSocketHandler):
     def on_message(self, message):
         self.write_message(json.dumps({'status':10,'msg': 'abriendo url'}))
         tree = seolint.url_open(message)
-        print tree
         self.write_message(json.dumps({'status':30,'msg': 'getting tags'}))
         tags = seolint.tags(tree)
         self.write_message(json.dumps({'status':40,'msg': 'obteniendo frecuencia...'}))
@@ -50,7 +49,7 @@ app = web.Application([
 #    (r'/(favicon.ico)', web.StaticFileHandler, {'path': '../'}),
 #    (r'/(rest_api_example.png)', web.StaticFileHandler, {'path': './'}),
 ],
- debug=True, autoreload=True)
+  autoreload=True)
 
 
 if __name__ == '__main__':
