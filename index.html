@@ -4,7 +4,7 @@
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.0/handlebars.amd.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.0/handlebars.min.js"></script>
 <script type="text/javascript">
  var ws = new WebSocket('ws://localhost:8888/ws');
     var $message = $('#message');
@@ -20,7 +20,8 @@
         $(".progress-bar").width(data.status+ "%");
         $("span#msg").text(data.msg);
       } else {
-        $("#message").text(ev.data);
+        var html = template(ev.data);
+        $("#message").html(html);
       }
     };
     ws.onclose = function(ev){
@@ -35,8 +36,11 @@ $(document).ready(function(){
     console.log("send", val);
     ws.send(val);
   });
+var source   = $("#result-template").html();
+var template = Handlebars.compile(source);
 
 });
+
 
 </script>
 </head>
@@ -71,7 +75,10 @@ $(document).ready(function(){
        </div>
     </div>
 </div>
-<script>
+<script  id="result-template" type="text/x-handlebars-template">
+{{!#each tags}}
+{{!keywords.tag}} {{!keywords.count}} {{!keywords.kw}}
+{{!/each}}
   
 </script>
 
