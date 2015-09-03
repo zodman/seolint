@@ -2,9 +2,9 @@
 <html>
   <head>
 
-<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.0/handlebars.amd.min.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.0/handlebars.amd.min.js"></script>
 <script type="text/javascript">
  var ws = new WebSocket('ws://localhost:8888/ws');
     var $message = $('#message');
@@ -16,7 +16,9 @@
       console.log("reci", ev);
       var data = JSON.parse(ev.data);
       if(data.status) {
-        $("#message").text(data.msg);
+        $(".progress").show();
+        $(".progress-bar").width(data.status+ "%");
+        $("span#msg").text(data.msg);
       } else {
         $("#message").text(ev.data);
       }
@@ -24,6 +26,7 @@
     ws.onclose = function(ev){
     };
     ws.onerror = function(ev){
+      $("#message").text("problem with the socket");
     };
 
 $(document).ready(function(){
@@ -39,11 +42,38 @@ $(document).ready(function(){
 </head>
 
 <body>
-   <div class="container">
-<input name="url" type="text" id="url">
-<button id="analize" >Analize</button>
+<div class="container">
+   <div class="row">
+     <div class="col-md-4 col-md-offset-4">
+    <div class="page-header">
+      <h1 class="text-center">seolint</h1>
+    </div>
 
-<div id="message"></div>
+      <div class="form-group">
+        <input name="url" type="text" id="url" class="form-control" placeholder="url">
+      </div>
+      <br>
+      <button id="analize" class="btn btn-default" >Analize</button>
+      <br>
+
+      <div class="progress" style="display:none;">
+    
+       <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+        </div>
+      </div>
+        <span  id="msg"></span> 
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+          <div id="message"></div>
+       </div>
+    </div>
 </div>
+<script>
+  
+</script>
+
 </body>
 </html>
