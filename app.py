@@ -3,12 +3,14 @@ from tornado.options import options, define, parse_command_line
 import json
 import seolint
 from goose import Goose
+import os
 
 parse_command_line()
 
 class IndexHandler(web.RequestHandler):
     def get(self):
-        self.render("index.html")
+        server = os.environ.get("DOMAIN","localhost:8888")
+        self.render("index.html", server=server)
 
 
 class SocketHandler(websocket.WebSocketHandler):
