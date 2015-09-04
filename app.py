@@ -30,6 +30,7 @@ class SocketHandler(websocket.WebSocketHandler):
         g = Goose()
         article = g.extract(url =message)
         self.write_message(json.dumps({'status':100,'msg': 'DONE!'}))
+        img = article.top_image.src if article.top_image else None
         result = {
                 'tags':tags, 'frequency': frecuency,
                 'digrams': digrams,'trigrams': trigrams,
@@ -38,7 +39,7 @@ class SocketHandler(websocket.WebSocketHandler):
                     'title': article.title,
                     'desc': article.meta_description,
                     'text': article.cleaned_text,
-                    'top_image': article.top_image.src,
+                    'top_image': img,
                 }
                 }
         self.write_message(json.dumps(result))
