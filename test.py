@@ -1,7 +1,7 @@
 from  websocket import create_connection
 import json
 import sys
-URL = 'ws://localhost:8888/ws'
+URL = 'ws://seolint.info/ws'
 
 d = sys.argv[1]
 conn = create_connection(URL)

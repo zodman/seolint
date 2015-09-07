@@ -1,3 +1,4 @@
 websocket-client
 tornado
 git+https://github.com/grangier/python-goose.git
+gevent

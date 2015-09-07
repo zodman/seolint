@@ -10,7 +10,8 @@
         var $message = $('#message');
         ws.onopen = function()
         {
-            console.log("open");
+          console.log("open");
+            $("#analize").attr("disabled", false);
         };
         ws.onmessage = function(ev)
         {
@@ -18,6 +19,10 @@
             console.log("reci", ev);
             var data = JSON.parse(ev.data);
             console.log(data);
+            if (data.error){
+                $("#message").html(data.msg);
+                return 
+            }
             if (data.status)
             {
                 $(".progress").show();
@@ -31,8 +36,10 @@
             }
         };
         ws.onclose = function(ev)
-        {
+        { 
+            console.log("socket closed");
             $("#analize").attr("disabled", true);
+         //   $("#message").text("websocket closed");
         };
         ws.onerror = function(ev)
         {
@@ -87,7 +94,7 @@
                 </div>
 
                 <div class="form-group">
-                    <input name="url" type="text" id="url" class="form-control" placeholder="url">
+                    <input name="url" type="text" id="url" class="form-control" placeholder="http://url">
                 </div>
                 <br>
                 <button id="analize" class="btn btn-default">Analizar</button>
@@ -105,14 +112,22 @@
         </div>
         <div class="row" style="padding-top:10px;">
             <div class="col-md-8 col-md-offset-2">
-                <div id="message"></div>
+              <div id="message"></div>
+
+              <div>
+                <h2>Analísis Onpage de SEO </h2>
+                <p>
+                  Esta herramienta es para <b>Valorar un sitio web</b>. Con respecto a  su  competencia. Obviamente cuantas imagenes hay que poner y tags para salir por arriba de los resultados.
+                  Primero valoras tu sitio web y despues valoras la competencia y comparas.
+                </p>
+              </div>
             </div>
         </div>
     </div>
     <footer class="footer">
         <div class="container">
             <p class="text-muted">
-                echo por<a href="http://twitter.com/zodman"> @zodman</a> - <a href="http://github.com/zodman/seolin/issues">Issues</a>
+                echo por<a href="http://twitter.com/zodman"> @zodman</a> - <a href="http://github.com/zodman/seolint/issues">Issues</a>
                 - <a href="http://github.com/zodman/seolint/wiki"> Mas info</a>
             </p>
         </div>

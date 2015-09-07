@@ -16,7 +16,19 @@ class IndexHandler(web.RequestHandler):
 class SocketHandler(websocket.WebSocketHandler):
     def on_message(self, message):
         self.write_message(json.dumps({'status':10,'msg': 'abriendo url'}))
-        tree = seolint.url_open(message)
+
+        if not 'http' in message:
+            self.write_message(json.dumps({'error':True, 'msg':'Url Invalida falta el http(s)://'}))
+            self.close()
+            return
+
+
+        try:
+            tree = seolint.url_open(message)
+        except IOError:
+            self.write_message(json.dumps({'error':True, 'msg':'Url Invalida'}))
+            self.close()
+            return
         self.write_message(json.dumps({'status':30,'msg': 'getting tags'}))
         tags = seolint.tags(tree)
         self.write_message(json.dumps({'status':40,'msg': 'obteniendo frecuencia...'}))
@@ -52,7 +64,7 @@ app = web.Application([
 #    (r'/(favicon.ico)', web.StaticFileHandler, {'path': '../'}),
 #    (r'/(rest_api_example.png)', web.StaticFileHandler, {'path': './'}),
 ],
-  autoreload=True)
+  autoreload=True, debug=True, compiled_template_cache=False, serve_traceback=True)
 
 
 if __name__ == '__main__':
